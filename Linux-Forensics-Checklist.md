@@ -119,7 +119,6 @@ netstat -v -W -e -o -p -l  > netstat_vWeop.txt
 Redo using `ss` if available:
 
 ```sh
-# SELinux: add "-Z"
 # --options --extended --processes --info --numeric (--listening )
 ss -o -e -p -i -n    > ss_oepin.txt
 ss -o -e -p -i -n -l > ss_oepinl.txt
