@@ -96,7 +96,13 @@ storage and that your current working directory is set accordingly.
 
 Some programs have rather unstable commandline parameters, please adjust
 accordingly (if possible, use `--help` instead of the manpage to find out). You
-can find the long version (if applicable) as comment above every command,
+can find the long versions (if applicable) as comments above every command.
+
+Some modern Linux systems have SELinux enabled. Run `getenforce` to find out if
+SELinux is enforcing, permissive, or disabled. If the state is enforcing, we
+need to get selinux information when applicable. Most tools provide a switch
+`-Z` for that. Such commands are marked with a special comment like
+`# SELinux: add "-Z"`.
 
 ### Network state
 
@@ -110,15 +116,16 @@ netstat -v -W -e -o -p        > netstat_vWeop.txt
 netstat -v -W -e -o -p -l  > netstat_vWeop.txt
 ```
 
-Redo using `ss` if it is installed:
+Redo using `ss` if available:
 
 ```sh
+# SELinux: add "-Z"
 # --options --extended --processes --info --numeric (--listening )
 ss -o -e -p -i -n    > ss_oepin.txt
 ss -o -e -p -i -n -l > ss_oepinl.txt
 # same without --numeric
-ss -o -e -p -i    > ss_oepi.txt
-ss -o -e -p -i -l > ss_oepil.txt
+ss -o -e -p -i       > ss_oepi.txt
+ss -o -e -p -i -l    > ss_oepil.txt
 ```
 
 Dump arp cache:
