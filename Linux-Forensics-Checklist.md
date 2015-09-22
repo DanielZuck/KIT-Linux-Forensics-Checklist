@@ -23,21 +23,21 @@ changes to the local filesystems. This only works if the compromized machine is
 still able to connect to your server.
 
 Open a listener on your server:
-```bash
+```sh
 nc -l 6789 >> logfilename.txt
 ```
 
 To send the standard output of a command, simply add this
-```bash
+```sh
  | nc -w 2 name_or_ip_of_server 6789
 ```
 
 Encrypt all data in transition to prevent eavesdropping. Simply insert
 [`openssl`](https://openssl.org/) into the toolchain:
-```bash
+```sh
 nc -l 6789 | openssl enc -aes128 -d -k supersecretpw >> log.txt
 ```
-```bash
+```sh
  | openssl enc -aes128 -e -k supersecretpw | nc -w 2 name_or_ip_of_server 6789
 ```
 
