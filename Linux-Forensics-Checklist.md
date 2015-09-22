@@ -31,4 +31,15 @@ To send the standard output of a command, simply add this
  | nc -w 2 name_or_ip_of_server 6789
 ```
 
+Encrypt all data in transition to prevent eavesdropping. Simply insert
+`openssl` into the toolchain:
+```bash
+nc -l 6789 | openssl enc -aes128 -d -k supersecretpw >> log.txt
+```
+```bash
+ | openssl enc -aes128 -e -k supersecretpw | nc -w 2 name_or_ip_of_server 6789
+```
+
+Use [cryptcat](http://cryptcat.sourceforge.net) if it's already available on
+the target machine.
 
