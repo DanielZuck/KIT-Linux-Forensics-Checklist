@@ -1,5 +1,8 @@
 # KIT-CERT's Checklist for Linux Forensics
 
+Authors:
+ * Heiko Reese <heiko.reese@kit.edu>
+
 ## Preliminary Considerations
 
 Forensic investigations of computer hardware is usually divided in two phases:
@@ -80,9 +83,63 @@ mount /dev/sdx1 /mnt
 
 ## Collecting evidence
 
-Collect evidence by saving potentielly interesting parts of the system state. Start with the most volatile and work your way down:
+Collect evidence by saving potentielly interesting parts of the system state.
+Start with the most volatile and work your way down:
 
 1. network and connection state
 1. process state
 1. users
 1. system configuration
+
+The following commands assume that you are writing your findings to a local
+storage and that your current working directory is set accordingly.
+
+Some programs have rather unstable commandline parameters, please adjust
+accordingly (if possible, use `--help` instead of the manpage to find out). You
+can find the long version (if applicable) as comment above every command,
+
+### Network state
+
+Get state of existing connections and open sockets:
+```sh
+# --verbose --wide --extend --timers --program --numeric (--listening)
+netstat -v -W -e -o -p -n     > netstat_vWeopn.txt
+netstat -v -W -e -o -p -n -l  > netstat_vWeopnl.txt
+# same without --numeric
+netstat -v -W -e -o -p        > netstat_vWeop.txt
+netstat -v -W -e -o -p -l  > netstat_vWeop.txt
+```
+
+Redo using `ss` if it is installed:
+
+```sh
+# --options --extended --processes --info --numeric (--listening )
+ss -o -e -p -i -n    > ss_oepin.txt
+ss -o -e -p -i -n -l > ss_oepinl.txt
+# same without --numeric
+ss -o -e -p -i    > ss_oepi.txt
+ss -o -e -p -i -l > ss_oepil.txt
+```
+
+Dump arp cache:
+```sh
+arp -n > arp_n.txt
+ip neigh show > ip_neigh_show.txt
+```
+
+Get routing-related stuff:
+```sh
+for i in link addr route rule neigh ntable tunnel tuntap maddr mroute mrule; do
+    ip $i list > ip_${i}_l.txt;
+done
+```
+
+Capture iptable's state:
+```sh
+# --verbose --numeric --exact --list --table
+for t in filter nat mangle raw; do iptables -v -n -x -L -t > iptables_vnxL_t${t}.txt; done
+for table in filter mangle raw; do ip6tables -n -t ${table} -L -v -x > ip6tables_nt_${table}.txt; done
+for table in filter nat broute; do ebtables -L --Lmac2 --Lc -t ${table} > ebtables_L_Lmac_Lc_t_${table}.txt; done
+```
+
+ 
