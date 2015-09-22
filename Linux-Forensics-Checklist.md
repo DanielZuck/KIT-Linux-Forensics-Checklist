@@ -171,3 +171,37 @@ pstree -a -l -p -u    > pstree_alpu.txt
 pstree -a -l -p -u -Z > pstree_alpuZ.txt
 ```
 
+`lsof` has the most unstable commandline interface. We're planning to include versions for specific linux distributions in the future…
+
+```sh
+lsof -b -l -P -X -n -o -R -U > lsof_blPXnoRU.txt
+```
+
+```sh
+# time pid creator limits
+ in t p c l; do ipcs -a -${i} > ipcs_a_${i}.txt;done
+```
+
+Add this on systems that use [systemd](http://www.freedesktop.org/wiki/Software/systemd/):
+```sh
+systemctl status -l > systemctl_status_l.txt
+```
+
+### Users
+
+```sh
+last > last.txt
+lastlog > lastlog.txt
+who > who.txt
+w > w.txt
+```
+
+Add this on systems that use systemd:
+```sh
+loginctl list-sessions > loginctl_list-sessions.txt
+for s in $(loginctl list-sessions --no-legend | awk '{print $1}'); do loginctl show-session ${s} > loginctl_show-session_${s}.txt; done
+for u in $(loginctl list-users --no-legend | awk '{print $1}'); do loginctl show-user ${u} > loginctl_show-user_${u}.txt; done
+```
+
+
+
