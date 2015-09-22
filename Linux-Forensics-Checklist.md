@@ -113,7 +113,7 @@ netstat -v -W -e -o -p -n     > netstat_vWeopn.txt
 netstat -v -W -e -o -p -n -l  > netstat_vWeopnl.txt
 # same without --numeric
 netstat -v -W -e -o -p        > netstat_vWeop.txt
-netstat -v -W -e -o -p -l  > netstat_vWeop.txt
+netstat -v -W -e -o -p -l     > netstat_vWeop.txt
 ```
 
 Redo using `ss` if available:
@@ -148,4 +148,26 @@ for table in filter mangle raw; do ip6tables -n -t ${table} -L -v -x > ip6tables
 for table in filter nat broute; do ebtables -L --Lmac2 --Lc -t ${table} > ebtables_L_Lmac_Lc_t_${table}.txt; done
 ```
 
- 
+### Process State
+
+Save process table:
+
+```sh
+ps auxwwwe > ps_auxwwwe.txt
+```
+
+Formatting of certain columns seems to be broken in many versions of `ps`, so
+we have to add the :xxxxx-postfixes to enforce wide columns. This is not meant
+for human consumption:
+
+```sh
+ps wwwe -A -o pid,ppid,sess,tname,tpgid,comm,f,uid,euid,rgid,ruid,gid,egid,fgid,ouid,pgid,sgid,suid,supgid,suser,pidns,unit,label,time,lstart,lsession,seat,machine,ni,wchan,etime,%cpu,%mem,cgroup:65535,args:65535 > ps_dump_e.txt
+ps www -A -o pid,ppid,sess,tname,tpgid,comm,f,uid,euid,rgid,ruid,gid,egid,fgid,ouid,pgid,sgid,suid,supgid,suser,pidns,unit,label,time,lstart,lsession,seat,machine,ni,wchan,etime,%cpu,%mem,cgroup:65535,args:65535 > ps_dump.txt
+```
+
+Something more human-readable:
+```sh
+pstree -a -l -p -u    > pstree_alpu.txt
+pstree -a -l -p -u -Z > pstree_alpuZ.txt
+```
+
