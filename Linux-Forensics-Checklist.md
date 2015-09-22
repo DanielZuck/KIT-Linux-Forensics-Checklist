@@ -78,3 +78,11 @@ mount -t tmpfs none /mnt
 mount /dev/sdx1 /mnt
 ```
 
+## Collecting evidence
+
+Collect evidence by saving potentielly interesting parts of the system state. Start with the most volatile and work your way down:
+
+1. network and connection state
+1. process state
+1. users
+1. system configuration
