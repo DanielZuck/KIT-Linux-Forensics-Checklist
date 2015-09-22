@@ -1,8 +1,5 @@
 # KIT-CERT's Checklist for Linux Forensics
 
-Authors:
- * Heiko Reese <heiko.reese@kit.edu>
-
 ## Preliminary Considerations
 
 Forensic investigations of computer hardware is usually divided in two phases:
@@ -89,7 +86,7 @@ Start with the most volatile and work your way down:
 1. network and connection state
 1. process state
 1. users
-1. system configuration
+1. system state and configuration
 
 The following commands assume that you are writing your findings to a local
 storage and that your current working directory is set accordingly.
@@ -203,5 +200,38 @@ for s in $(loginctl list-sessions --no-legend | awk '{print $1}'); do loginctl s
 for u in $(loginctl list-users --no-legend | awk '{print $1}'); do loginctl show-user ${u} > loginctl_show-user_${u}.txt; done
 ```
 
+### System State and Configuration
+
+```sh
+dmesg > dmesg.txt
+cat /proc/mounts > proc_mounts.txt
+# or use the all-namespace-encompassing version
+for p in $(md5sum /proc/mounts /proc/*/mounts | sort | uniq -d -w 32 | awk '{print $2}'); do cat $p > ${p////_}; done
+cat /proc/mdstat > proc_mdstat.txt
+lspci > lspci.txt
+uname -a > uname_a.txt
+uptime > uptime.txt
+```
+
+# Dumping suspicious processess
+
+Have a closer look at the process list. Do this for every suspicious process:
+
+Assign it to the `PID` variable for later usage:
+```sh
+# insert correct PID here!
+export PID=12345
+```
+
+Stop the process:
+```sh
+kill -STOP ${PID}
+```
 
 
+
+
+
+#### Authors:
+ * Heiko Reese <heiko.reese@kit.edu>
+ * Tobias Dussa <tobias.dussa@kit.edu>
