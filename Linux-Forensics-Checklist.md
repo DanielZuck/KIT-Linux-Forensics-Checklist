@@ -76,7 +76,7 @@ md5sum /proc/mounts /proc/*/mounts | sort | uniq -d -w 32
 
 Get creative to solve this chicken-egg-problem! If you have copy/paste on your
 console, simply `cat`the files and copy the aferwards. Don't use screen/tmux,
-the touch lots of files. Check for empty pre-existing `tmpfs`-filesystems.
+they touch lots of files. Check for empty pre-existing `tmpfs`-filesystems.
 
 Find a proper location for the mountpoint and Mount your device:
 ```
