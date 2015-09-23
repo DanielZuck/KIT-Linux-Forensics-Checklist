@@ -20,7 +20,7 @@ Merely looking at the file (`cat /etc/mtab`) changes the access time of `/etc`.
 
 You may push your findings directly onto the network, thus preventing/minimizing
 changes to the local filesystems. This only works if the compromized machine is
-still able to connect to your server.
+still able to make outgoing connections to the destination server .
 
 Open a listener on your server:
 ```sh
@@ -54,6 +54,10 @@ Use `dd` to  transfer whole blockdevices:
 ```
 dd if=/dev/sdx23 | nc…
 ```
+
+Using [fuse sshfs](http://fuse.sourceforge.net/sshfs.html) is discouraged for
+two reasons. First, it touches lots of files ($HOME/.ssh/*, /etc). And more
+importantly: attackers often change the ssh binaries to intercept passwords.
 
 ### Collecting data on local storage
 
@@ -226,6 +230,36 @@ export PID=12345
 Stop the process:
 ```sh
 kill -STOP ${PID}
+```
+
+TODO: Add cgroups-freezer-variant and discuss it (freezer blocks gdb/gcore).
+
+Preserve original location of executable (plus a broken symlink of file was deleted) and the contents:
+```sh
+ls -l /proc/${PID}/ > proc_${PID}_ls_l.txt
+cat /proc/${PID}/exe > proc_${PID}_exe
+```
+
+Create a coredump to preserve the process memory:
+```sh
+gdb -nh -batch -ex gcore -p ${PID}
+```
+
+We have not found a way to dump the cores directly into an unnamed pipe and out
+into the net. There's a workaround using a named pipe, but you have to find
+a good place to put it. We recommend using a tmpfs (either existing or create
+a new one for this). As a bonus, this enables us to compress the coredump using
+whatever compression software we have available:
+
+```sh
+# change path accordingly
+MYFIFO=.gcore.fifo
+mkfifo ${MYFIFO}
+
+# either run this command in the background (append &) or in another shell
+cat ${MYFIFO} | [gzip|bzip2|xz|lzop] -c > core.${PID}
+
+gdb -nh -batch -ex "gcore ${MYFIFO}" -p ${PID}
 ```
 
 
