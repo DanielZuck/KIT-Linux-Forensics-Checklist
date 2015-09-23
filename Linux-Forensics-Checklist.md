@@ -41,8 +41,8 @@ nc -l 6789 | openssl enc -aes128 -d -k supersecretpw >> log.txt
  | openssl enc -aes128 -e -k supersecretpw | nc -w 2 name_or_ip_of_server 6789
 ```
 
-Use [cryptcat](http://cryptcat.sourceforge.net) if it's already available on
-the target machine.
+Use [cryptcat](http://cryptcat.sourceforge.net) if it's available on the
+compromised machine.
 
 To copy files, use `cat`:
 
@@ -58,6 +58,9 @@ dd if=/dev/sdx23 | nc…
 Using [fuse sshfs](http://fuse.sourceforge.net/sshfs.html) is discouraged for
 two reasons. First, it touches lots of files ($HOME/.ssh/*, /etc). And more
 importantly: attackers often change the ssh binaries to intercept passwords.
+
+The same problems apply to the `… | ssh user@host 'cat > /my/destination/file`
+approach.
 
 ### Collecting data on local storage
 
@@ -248,11 +251,38 @@ gdb -nh -batch -ex gcore -p ${PID}
 We have not found a way to dump the cores directly into an unnamed pipe and out
 into the net. Using FIFOs does not work because gdb needs to seek within the
 file while writing it. Using a tmpfs might fails because some coredumps can get
-pretty big. There are nor widely available and stable compressing filesystems
-available for linux.
+pretty big. There are no widely available and stable compressing filesystems
+available for linux at the time of writing.
 
+Check for shared memory segments:
+```sh
+# look for /dev/shms
+less /proc/${PID}/map
+```
+
+Save some more state information about the process. The available data in the
+`/proc/$PID/` of the procfs varies between different kernel versions. Please
+check `/proc/self` to what's available and adjust the next commandline
+accordingly.
+
+```sh
+# use "tar -cf - /proc/… | …" to pipe the tarball to stdout
+tar cf proc_${PID}.tar /proc/${PID}/{auxv,cgroup,cmdline,comm,environ,limits,\
+loginuid,maps,mountinfo,sched,schedstat,sessionid,smaps,stack,stat,statm,status,\
+syscall,wchan}
+```
+
+Have a look at the open files. If the file has been deleted, ls will append
+` (deleted)` to the destination filename. The contents can still be accessed
+using the symlinks in `/proc/${PID}/fd`. This often happens with malware
+written in interpreted languages like perl and python. Save all interesting
+open files now: ```sh
+ls -l /proc/${PID}/fd > proc_${PID}_fd.txt
+# copy interesting open files, substitute MYFD with file descriptor number
+MYFD=1234
+cat /proc/${PID}/${MYFD}> proc_${PID}_fd_${MYFD}
+```
 
 
 #### Authors:
  * Heiko Reese <heiko.reese@kit.edu>
- * Tobias Dussa <tobias.dussa@kit.edu>
