@@ -293,6 +293,9 @@ MYFD=1234
 cat /proc/${PID}/${MYFD}> proc_${PID}_fd_${MYFD}
 ```
 
+Only kill the process if
+1. you are sure that you don't need to access it anymore _and_
+1. its presence is preventing you from continuing your work.
 
 #### Authors:
  * Heiko Reese <heiko.reese@kit.edu>
