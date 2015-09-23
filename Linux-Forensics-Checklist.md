@@ -285,7 +285,8 @@ Have a look at the open files. If the file has been deleted, ls will append
 ` (deleted)` to the destination filename. The contents can still be accessed
 using the symlinks in `/proc/${PID}/fd`. This often happens with malware
 written in interpreted languages like perl and python. Save all interesting
-open files now: ```sh
+open files now:
+```sh
 ls -l /proc/${PID}/fd > proc_${PID}_fd.txt
 # copy interesting open files, substitute MYFD with file descriptor number
 MYFD=1234
