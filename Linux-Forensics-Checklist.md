@@ -230,7 +230,7 @@ uname -a > uname_a.txt
 uptime > uptime.txt
 ```
 
-# Dumping suspicious processess
+### Dumping suspicious processess
 
 Have a closer look at the process list. Do this for every suspicious process
 (assign pid to the `PID` variable beforehand):
@@ -293,9 +293,115 @@ MYFD=1234
 cat /proc/${PID}/${MYFD}> proc_${PID}_fd_${MYFD}
 ```
 
+The online forensics parts of this guide end with us pulling power from the
+machine. There's usually no need to kill the suspicious processes.
+
 Only kill the process if
-1. you are sure that you don't need to access it anymore _and_
-1. its presence is preventing you from continuing your work.
+1. its presence is preventing you from continuing your work (e.g. mountpoints are busy) *and*
+1. you are sure that you don't need to access it anymore *or*
+1. if you have to keep the machine running after your investigation is finished.
+
+
+
+```sh
+# are you sure you want to do this?
+kill -9 ${PID}
+```
+
+### Create a filesystem timeline
+
+If you can't get an image of the system's storage afterwards for offline
+forensics, you need to create a rudimentary timeline now. Using `find` on
+a filesystem will `stat()` every file and directory on a filesystem thus
+changing all access timestamps. There are (at least) two ways to circumvent
+this.
+
+#### Remount all filesystems to readonly
+
+For every filesystem that we want to look at, remount it ro:
+```sh
+# set mountpoint
+MOUNTPOINT=/home
+mount -o remount,ro ${MOUNTPOINT}
+```
+
+Then create a timeline:
+```sh
+find "${MOUNTPOINT}" -xdev -print0 | xargs -0 stat -c "%Y %X %Z %A %U %G %n" >> timestamps.dat
+```
+
+#### Create readonly aliases
+
+For every filesystem that we want to look at, do this:
+```sh
+# substitute all mountpoints
+ORG_FS=/home
+RO_FS=/mnt/ro_fs
+mkdir ${RO_FS}
+mount --bind ${ORG_FS} ${RO_FS}
+mount -o remount,ro ${RO_FS}
+find ${RO_FS} -xdev -print0 | xargs -0 stat -c "%Y %X %Z %A %U %G %n" >> timestamps.dat
+umount ${RO_FS}
+```
+
+#### Cheap alternative: noatime
+
+```sh
+mount -o remount,noatime …
+```
+
+Use this python program (written by Leif Nixon <TODO: email>) to create a human
+readable timeline:
+```sh
+# timeline-decorator.py
+
+#!/usr/bin/python
+
+import sys, time
+
+def print_line(flags, t, mode, user, group, name):
+    print t, time.ctime(float(t)), flags, mode, user, group, name
+
+for line in sys.stdin:
+    line = line[:-1]
+    (m, a, c, mode, user, group, name) = line.split(" ", 6)
+    if m == a:
+        if m == c:
+            print_line("mac", m, mode, user, group, name)
+        else:
+            print_line("ma-", m, mode, user, group, name)
+            print_line("--c", c, mode, user, group, name)
+    else:
+        if m == c:
+            print_line("m-c", m, mode, user, group, name)
+            print_line("-a-", a, mode, user, group, name)
+        else:
+            print_line("m--", m, mode, user, group, name)
+            print_line("-a-", a, mode, user, group, name)
+            print_line("--c", c, mode, user, group, name)
+
+```
+
+If you can't have the systems disks afterwards, feel free to look around some more:
+
+* [chkrootkit]( http://www.chkrootkit.org)
+* [OSSEC rootcheck](http://www.ossec.net/main/rootcheck)
+* [rkhunter](http://rkhunter.sourceforge.net)
+* [Trojanscan](http://www.trojanscan.org)
+* [CVE-Checker](http://cvechecker.sourceforge.net/)
+
+If applicable, compare checksums of package management with actual files:
+
+* `debsums` (Debian-based distributions)
+* `rpm -Va` (Redhat-based distributions)
+
+TODO: logfiles, /etc, journald, …
+
+## Power down system
+
+*Don't* do a `shutdown` or `poweroff`! Cut the power (hold power button for
+several seconds) or »force off« virtual machines.
+
 
 #### Authors:
  * Heiko Reese <heiko.reese@kit.edu>
