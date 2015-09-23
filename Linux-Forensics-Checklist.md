@@ -165,8 +165,12 @@ we have to add the :xxxxx-postfixes to enforce wide columns. This is not meant
 for human consumption:
 
 ```sh
-ps wwwe -A -o pid,ppid,sess,tname,tpgid,comm,f,uid,euid,rgid,ruid,gid,egid,fgid,ouid,pgid,sgid,suid,supgid,suser,pidns,unit,label,time,lstart,lsession,seat,machine,ni,wchan,etime,%cpu,%mem,cgroup:65535,args:65535 > ps_dump_e.txt
-ps www -A -o pid,ppid,sess,tname,tpgid,comm,f,uid,euid,rgid,ruid,gid,egid,fgid,ouid,pgid,sgid,suid,supgid,suser,pidns,unit,label,time,lstart,lsession,seat,machine,ni,wchan,etime,%cpu,%mem,cgroup:65535,args:65535 > ps_dump.txt
+ps wwwe -A -o pid,ppid,sess,tname,tpgid,comm,f,uid,euid,rgid,ruid,gid,egid,fgid,\
+ouid,pgid,sgid,suid,supgid,suser,pidns,unit,label,time,lstart,lsession,seat,\
+machine,ni,wchan,etime,%cpu,%mem,cgroup:65535,args:65535 > ps_dump_e.txt
+ps www -A -o pid,ppid,sess,tname,tpgid,comm,f,uid,euid,rgid,ruid,gid,egid,fgid,\
+ouid,pgid,sgid,suid,supgid,suser,pidns,unit,label,time,lstart,lsession,seat,\
+machine,ni,wchan,etime,%cpu,%mem,cgroup:65535,args:65535 > ps_dump.txt
 ```
 
 Something more human-readable:
@@ -203,8 +207,12 @@ w > w.txt
 Add this on systems that use systemd:
 ```sh
 loginctl list-sessions > loginctl_list-sessions.txt
-for s in $(loginctl list-sessions --no-legend | awk '{print $1}'); do loginctl show-session ${s} > loginctl_show-session_${s}.txt; done
-for u in $(loginctl list-users --no-legend | awk '{print $1}'); do loginctl show-user ${u} > loginctl_show-user_${u}.txt; done
+for s in $(loginctl list-sessions --no-legend | awk '{print $1}'); do
+    loginctl show-session ${s} > loginctl_show-session_${s}.txt;
+done
+for u in $(loginctl list-users --no-legend | awk '{print $1}'); do
+    loginctl show-user ${u} > loginctl_show-user_${u}.txt;
+done
 ```
 
 ### System State and Configuration
@@ -213,7 +221,9 @@ for u in $(loginctl list-users --no-legend | awk '{print $1}'); do loginctl show
 dmesg > dmesg.txt
 cat /proc/mounts > proc_mounts.txt
 # or use the all-namespace-encompassing version
-for p in $(md5sum /proc/mounts /proc/*/mounts | sort | uniq -d -w 32 | awk '{print $2}'); do cat $p > ${p////_}; done
+for p in $(md5sum /proc/mounts /proc/*/mounts | sort | uniq -d -w 32 | awk '{print $2}'); do
+    cat $p > ${p////_};
+done
 cat /proc/mdstat > proc_mdstat.txt
 lspci > lspci.txt
 uname -a > uname_a.txt
