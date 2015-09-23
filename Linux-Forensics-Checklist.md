@@ -1,4 +1,4 @@
-# KIT-CERT's Checklist for Linux Forensics
+# KIT-CERT Checklist for Linux Forensics
 
 ## Preliminary Considerations
 
@@ -402,6 +402,12 @@ TODO: logfiles, /etc, journald, …
 *Don't* do a `shutdown` or `poweroff`! Cut the power (hold power button for
 several seconds) or »force off« virtual machines.
 
+## Offline Forensics
+
+TODO:
+* Binaries: strings, hexdump, objdump, elf*, gdb, rec (http://www.backerstreet.com/rec/rec.htm), IDAPro,…
+* Logfiles: grep, sort, log2timeline, …
+* Autosy, rkhunter, …
 
 #### Authors:
  * Heiko Reese <heiko.reese@kit.edu>
