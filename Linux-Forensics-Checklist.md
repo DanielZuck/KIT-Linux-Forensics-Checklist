@@ -246,23 +246,10 @@ gdb -nh -batch -ex gcore -p ${PID}
 ```
 
 We have not found a way to dump the cores directly into an unnamed pipe and out
-into the net. There's a workaround using a named pipe, but you have to find
-a good place to put it. We recommend using a tmpfs (either existing or create
-a new one for this). As a bonus, this enables us to compress the coredump using
-whatever compression software we have available:
-
-```sh
-# change path accordingly
-MYFIFO=.gcore.fifo
-mkfifo ${MYFIFO}
-
-# either run this command in the background (append &) or in another shell
-cat ${MYFIFO} | [gzip|bzip2|xz|lzop] -c > core.${PID}
-
-gdb -nh -batch -ex "gcore ${MYFIFO}" -p ${PID}
-```
-
-
+into the net. Using FIFOs does not work because gdb needs to seek within the
+file while writing it. Using a tmpfs might fails because some coredumps can get
+pretty big. There are nor widely available and stable compressing filesystems
+available for linux.
 
 
 
