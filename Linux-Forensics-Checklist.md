@@ -232,9 +232,8 @@ uptime > uptime.txt
 
 # Dumping suspicious processess
 
-Have a closer look at the process list. Do this for every suspicious process:
-
-Assign it to the `PID` variable for later usage:
+Have a closer look at the process list. Do this for every suspicious process
+(assign pid to the `PID` variable beforehand):
 ```sh
 # insert correct PID here!
 export PID=12345
