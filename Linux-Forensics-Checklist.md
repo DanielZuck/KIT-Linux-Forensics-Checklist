@@ -187,7 +187,7 @@ lsof -b -l -P -X -n -o -R -U > lsof_blPXnoRU.txt
 
 ```sh
 # time pid creator limits
- in t p c l; do ipcs -a -${i} > ipcs_a_${i}.txt;done
+for i in t p c l; do ipcs -a -${i} > ipcs_a_${i}.txt;done
 ```
 
 Add this on systems that use [systemd](http://www.freedesktop.org/wiki/Software/systemd/):
