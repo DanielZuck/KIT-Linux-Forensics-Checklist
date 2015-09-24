@@ -423,7 +423,7 @@ are no hard rules here, just some general ideas:
 
 * `/etc`
 * `/root`
-* `/tmp`
+* `/tmp`, `/var/tmp` (generally all public writable directories)
 * `/usr/local`
 * `/var/log`
 * `/home/*/.ssh/authorized_keys`
