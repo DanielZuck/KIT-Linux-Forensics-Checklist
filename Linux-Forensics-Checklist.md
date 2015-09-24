@@ -374,9 +374,8 @@ mount -o remount,noatime …
 Use this python program (written by Leif Nixon <TODO: email>) to create a human
 readable timeline:
 ```sh
-# timeline-decorator.py
-
 #!/usr/bin/python
+# timeline-decorator.py
 
 import sys, time
 
@@ -417,7 +416,21 @@ If applicable, compare checksums of package management with actual files:
 * `debsums` (Debian-based distributions)
 * `rpm -Va` (Redhat-based distributions)
 
-TODO: logfiles, /etc, journald, …
+### Gather potentially interesting data before shutdown
+
+Copy (or `[dd|tar -cf -] … | …`) things that might be of interest later. There
+are no hard rules here, just some general ideas:
+
+* `/etc`
+* `/root`
+* `/tmp`
+* `/usr/local`
+* `/var/log`
+* `/home/*/.ssh/authorized_keys`
+* sshd binary on disk and in memory (`/proc/$(pidof -s sshd)/exe`)
+* anything the tools in the previous step found
+
+TODO: journald, …
 
 ## Power down system
 
