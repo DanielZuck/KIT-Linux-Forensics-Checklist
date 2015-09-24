@@ -112,8 +112,7 @@ can find the long versions (if applicable) as comments above every command.
 Some modern Linux systems have SELinux enabled. Run `getenforce` to find out if
 SELinux is enforcing, permissive, or disabled. If the state is enforcing, we
 need to get selinux information when applicable. Most tools provide a switch
-`-Z` for that. Such commands are marked with a special comment like
-`# SELinux: add "-Z"`.
+`-Z` for that.
 
 ### Network state
 
