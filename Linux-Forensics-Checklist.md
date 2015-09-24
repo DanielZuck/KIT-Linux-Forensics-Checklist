@@ -1,13 +1,20 @@
 # KIT-CERT Checklist for Linux Forensics
 
+This document outlines [our](https://www.cert.kit.edu) initial actions to
+investigate a potentially compromised Linux system. It assumes that the reader
+has a good technical understanding of how Linux systems work. This is basically
+a copy/paste list of things to do in a certain order.
+
+Make sure you understand each action point before you reenact it..
+
 ## Preliminary Considerations
 
 Forensic investigations of computer hardware is usually divided in two phases:
 online forensics (analysis of the running system) and offline forensics
 (examination of the permanent storage).
 
-This document's primary focus is the first phase (online forensics). We assume
-that the reader has root access to the compromised machine.
+This document's primary focus is the data gathering aspect of the first phase.
+We assume that the reader has root access to the compromised machine.
 
 ## Find a proper place to store your findings
 
@@ -179,7 +186,7 @@ pstree -a -l -p -u    > pstree_alpu.txt
 pstree -a -l -p -u -Z > pstree_alpuZ.txt
 ```
 
-`lsof` has the most unstable commandline interface. We're planning to include versions for specific linux distributions in the future…
+`lsof` has the most unstable commandline interface. We're planning to include versions for specific Linux distributions in the future…
 
 ```sh
 lsof -b -l -P -X -n -o -R -U > lsof_blPXnoRU.txt
@@ -244,7 +251,18 @@ Stop the process:
 kill -STOP ${PID}
 ```
 
-TODO: Add cgroups-freezer-variant and discuss it (freezer blocks gdb/gcore).
+Note: While the reception of a  `SIGSTOP` cannot be prevented by the receiving
+process, it can be observed from the outside. This might cause a controlling
+parent-process to react accordingly. Modern systems provide an alternative method via
+[cgroups](https://www.kernel.org/doc/Documentation/cgroups/cgroups.txt),
+especially the [freezer
+subsystem](https://www.kernel.org/doc/Documentation/cgroups/freezer-subsystem.txt).
+There is one caveat: `ptrace()`ing a frozen process will block, rendering
+this approach unfit for our purposes. It might nevertheless prove beneficial to
+freeze everything first and then sort out the mess afterwards. We have recently
+seen malware that forks children at a high frequency meking it hard to stop all
+processes. This might be a way to tackle this problem; watch this space for
+updates :-)
 
 Preserve original location of executable (plus a broken symlink of file was deleted) and the contents:
 ```sh
@@ -261,7 +279,7 @@ We have not found a way to dump the cores directly into an unnamed pipe and out
 into the net. Using FIFOs does not work because gdb needs to seek within the
 file while writing it. Using a tmpfs might fails because some coredumps can get
 pretty big. There are no widely available and stable compressing filesystems
-available for linux at the time of writing.
+available for Linux at the time of writing.
 
 Check for shared memory segments:
 ```sh
@@ -311,7 +329,10 @@ kill -9 ${PID}
 ### Create a filesystem timeline
 
 If you can't get an image of the system's storage afterwards for offline
-forensics, you need to create a rudimentary timeline now. Using `find` on
+forensics, you need to create a rudimentary timeline now. Otherwise, skim over
+the next parts and process to [shutdown part](#power-down-system).
+
+Using `find` on
 a filesystem will `stat()` every file and directory on a filesystem thus
 changing all access timestamps. There are (at least) two ways to circumvent
 this.
@@ -382,7 +403,8 @@ for line in sys.stdin:
 
 ```
 
-If you can't have the systems disks afterwards, feel free to look around some more:
+If you cannot get the system's disks (or images thereof) afterwards, feel free
+to look around some more:
 
 * [chkrootkit]( http://www.chkrootkit.org)
 * [OSSEC rootcheck](http://www.ossec.net/main/rootcheck)
