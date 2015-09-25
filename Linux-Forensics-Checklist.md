@@ -372,7 +372,7 @@ mount -o remount,noatime …
 
 Use this python program (written by Leif Nixon <TODO: email>) to create a human
 readable timeline:
-```sh
+```python
 #!/usr/bin/python
 # timeline-decorator.py
 
