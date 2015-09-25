@@ -1,4 +1,4 @@
-# KIT-CERT Checklist for Linux Forensics
+# KIT-CERT Linux Forensics Checklist
 
 This document outlines [our](https://www.cert.kit.edu) initial actions to
 investigate a potentially compromised Linux system. It assumes that the reader
