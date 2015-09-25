@@ -329,7 +329,7 @@ kill -9 ${PID}
 
 If you can't get an image of the system's storage afterwards for offline
 forensics, you need to create a rudimentary timeline now. Otherwise, skim over
-the next parts and process to [shutdown part](#power-down-system).
+the next parts and process to [dumping LUKS keysp](optionally-retrieve-LUKS-master-keys).
 
 Using `find` on
 a filesystem will `stat()` every file and directory on a filesystem thus
@@ -431,9 +431,38 @@ are no hard rules here, just some general ideas:
 
 TODO: journald, …
 
-### Optionally Retrieve LUKS master keys
+### Optionally retrieve LUKS master keys
 
+Find out if there are any LUKS-encrypted devices:
+```sh
+for dev in $(lsblk -n -o KNAME); do
+    if cryptsetup isLuks "/dev/${dev}"; then
+        echo $dev;
+        cryptsetup luksDump /dev/sdc2 > cryptsetup_luksDump_$dev.txt
+    fi;
+done
+```
 
+There are two options if the system has encrypted disks and the current owner
+does not want to share the secret key. Both options requires someone who knows
+the encryption keys to enter them once for each device.
+
+Option one: add another keys using
+```sh
+cryptsetup luksAddKey /dev/…
+```
+
+While this changes the LUKS-header on-disk, it does not affect the containing filesystem.
+
+Option two: dump the encryption masterkey. Handle with care!
+```sh
+for dev in $(lsblk -n -o KNAME); do
+    if cryptsetup isLuks "/dev/${dev}"; then
+        echo $dev;
+        cryptsetup --dump-master-key luksDump "/dev/${dev}" | tee cryptsetup_luksDump_$dev.masterkey
+    fi;
+done
+```
 
 ## Power down system
 
