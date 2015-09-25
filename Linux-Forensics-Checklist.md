@@ -431,6 +431,10 @@ are no hard rules here, just some general ideas:
 
 TODO: journald, …
 
+### Optionally Retrieve LUKS master keys
+
+
+
 ## Power down system
 
 *Don't* do a `shutdown` or `poweroff`! Cut the power (hold power button for
