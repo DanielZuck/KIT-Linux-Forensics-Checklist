@@ -271,7 +271,9 @@ cat /proc/${PID}/exe > proc_${PID}_exe
 
 Create a coredump to preserve the process memory:
 ```sh
-gdb -nh -batch -ex gcore -p ${PID}
+gcore ${PID}
+# some systems don't have gcore, use this instead:
+gdb -nx -batch -ex "attach ${PID}" -ex "gcore core.${PID}" -ex detach -ex quit
 ```
 
 We have not found a way to dump the cores directly into an unnamed pipe and out
