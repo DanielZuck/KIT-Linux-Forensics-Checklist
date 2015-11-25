@@ -158,6 +158,11 @@ for table in filter mangle raw; do ip6tables -n -t ${table} -L -v -x > ip6tables
 for table in filter nat broute; do ebtables -L --Lmac2 --Lc -t ${table} > ebtables_L_Lmac_Lc_t_${table}.txt; done
 ```
 
+Dump ipsets (commonly usef by fail2ban and firewalld):
+```sh
+ipset list > ipset_list.txt
+```
+
 ### Process State
 
 Save process table:
