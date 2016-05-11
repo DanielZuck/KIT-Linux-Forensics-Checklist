@@ -263,10 +263,9 @@ especially the [freezer
 subsystem](https://www.kernel.org/doc/Documentation/cgroups/freezer-subsystem.txt).
 There is one caveat: `ptrace()`ing a frozen process will block, rendering
 this approach unfit for our purposes. It might nevertheless prove beneficial to
-freeze everything first and then sort out the mess afterwards. We have recently
-seen malware that forks children at a high frequency meking it hard to stop all
-processes. This might be a way to tackle this problem; watch this space for
-updates :-)
+freeze everything first and then sort out the mess afterwards. We often see malware
+that forks children at a high frequency that are hard to stop inas a whole.
+This might be a way to tackle this problem; watch this space for updates :-)
 
 Preserve original location of executable (plus a broken symlink of file was deleted) and the contents:
 ```sh
