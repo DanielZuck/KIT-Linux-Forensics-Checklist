@@ -153,7 +153,7 @@ done
 Capture iptable's state:
 ```sh
 # --verbose --numeric --exact --list --table
-for table in filter nat mangle raw; do iptables -v -n -x -L -t > iptables_vnxL_t${t}.txt; done
+for table in filter nat mangle raw; do iptables -v -n -x -L -t ${table} > iptables_vnxL_t${table}.txt; done
 for table in filter mangle raw; do ip6tables -n -t ${table} -L -v -x > ip6tables_nt_${table}.txt; done
 for table in filter nat broute; do ebtables -L --Lmac2 --Lc -t ${table} > ebtables_L_Lmac_Lc_t_${table}.txt; done
 ```
@@ -290,7 +290,7 @@ available for Linux at the time of writing.
 Check for shared memory segments:
 ```sh
 # look for /dev/shms
-less /proc/${PID}/map
+cat /proc/${PID}/maps
 ```
 
 Save some more state information about the process. The available data in the
