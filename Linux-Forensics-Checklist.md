@@ -123,7 +123,7 @@ netstat -v -W -e -o -p -n     > netstat_vWeopn.txt
 netstat -v -W -e -o -p -n -l  > netstat_vWeopnl.txt
 # same without --numeric
 netstat -v -W -e -o -p        > netstat_vWeop.txt
-netstat -v -W -e -o -p -l     > netstat_vWeop.txt
+netstat -v -W -e -o -p -l     > netstat_vWeopl.txt
 ```
 
 Redo using `ss` if available:
