@@ -155,7 +155,7 @@ Capture iptable's state:
 # --verbose --numeric --exact --list --table
 for table in filter nat mangle raw; do iptables -v -n -x -L -t ${table} > iptables_vnxL_t${table}.txt; done
 for table in filter mangle raw; do ip6tables -n -t ${table} -L -v -x > ip6tables_nt_${table}.txt; done
-for table in filter nat broute; do ebtables -L --Lmac2 --Lc -t ${table} > ebtables_L_Lmac_Lc_t_${table}.txt; done
+for table in filter nat broute; do ebtables -t ${table} -L --Lmac2 --Lc > ebtables_L_Lmac_Lc_t_${table}.txt; done
 ```
 
 Dump ipsets (commonly usef by fail2ban and firewalld):
