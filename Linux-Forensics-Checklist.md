@@ -377,7 +377,7 @@ mount -o remount,noatime …
 ```
 
 Use this python program (written by Leif Nixon <TODO: email>) to create a human
-readable timeline:
+readable timeline and run it through `sort -n`:
 ```python
 #!/usr/bin/python
 # timeline-decorator.py
@@ -385,7 +385,7 @@ readable timeline:
 import sys, time
 
 def print_line(flags, t, mode, user, group, name):
-    print t, time.ctime(float(t)), flags, mode, user, group, name
+    print t, time.strftime('%Y-%m-%dT%H:%M:%S %Z', time.gmtime(float(t))), flags, mode, user, group, name
 
 for line in sys.stdin:
     line = line[:-1]
